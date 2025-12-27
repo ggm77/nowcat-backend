@@ -1,6 +1,7 @@
 package org.nowcat.nowcat.domain.image.service;
 
 import lombok.RequiredArgsConstructor;
+import org.nowcat.nowcat.domain.image.dto.ImageDto;
 import org.nowcat.nowcat.domain.image.entity.Image;
 import org.nowcat.nowcat.domain.image.repository.ImageRepository;
 import org.nowcat.nowcat.global.exception.CustomException;
@@ -8,6 +9,8 @@ import org.nowcat.nowcat.global.exception.constants.ExceptionCode;
 import org.nowcat.nowcat.global.infra.storage.local.LocalFileStorage;
 import org.nowcat.nowcat.global.utils.ImageUtil;
 import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -97,5 +100,30 @@ public class ImageService {
         final Image savedImage = imageRepository.save(image);
 
         return savedImage.getId();
+    }
+
+    public ImageDto getImage(final Long imageId) {
+
+        // 1) 파일 정보 조회
+        final Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new CustomException(ExceptionCode.FILE_INFO_NOT_FOUND));
+
+        // 2) 확인 안된 파일이면 조회 금지
+        if(!image.getIsConfirmed()){
+            throw new CustomException(ExceptionCode.FILE_NOT_CONFIRMED);
+        }
+
+        // 3) 변수에 정보 저장
+        final String name = image.getName();
+        final String extension = image.getExtension();
+
+        // 4) 파일 읽어오기
+        final Resource file = localFileStorage.loadImage(name);
+
+        return ImageDto.builder()
+                .file(file)
+                .contentType("image/"+extension)
+                .name(name)
+                .build();
     }
 }

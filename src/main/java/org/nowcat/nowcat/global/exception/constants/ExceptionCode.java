@@ -13,6 +13,10 @@ public enum ExceptionCode {
     INVALID_FILE_NAME(HttpStatus.BAD_REQUEST, "파일 이름이 없습니다."),
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "파일 확장자가 올바르지 않습니다."),
     INVALID_FILE(HttpStatus.BAD_REQUEST, "올바르지 않은 파일입니다."),
+    FILE_INFO_NOT_FOUND(HttpStatus.BAD_REQUEST, "파일을 정보를 찾지 못했습니다."),
+
+    FILE_NOT_CONFIRMED(HttpStatus.FORBIDDEN, "확인 되지 않은 파일입니다."),
+    INVALID_FILE_PATH(HttpStatus.FORBIDDEN, "올바르지 않은 경로입니다."),
 
     PARENT_FOLDER_NOT_EXIST(HttpStatus.INTERNAL_SERVER_ERROR, "파일을 저장할 폴더가 없습니다."),
     FILE_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "파일 저장에 실패했습니다."),

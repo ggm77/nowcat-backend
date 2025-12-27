@@ -1,13 +1,13 @@
 package org.nowcat.nowcat.domain.image.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.nowcat.nowcat.domain.image.dto.ImageDto;
 import org.nowcat.nowcat.domain.image.service.ImageService;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -33,5 +33,20 @@ public class ImageController {
                 .toUri();
 
         return ResponseEntity.created(location).build();
+    }
+
+    @GetMapping("/images/{imageId}")
+    public ResponseEntity<Resource> getImage(
+            @PathVariable final Long imageId
+    ) {
+        final ImageDto imageDto = imageService.getImage(imageId);
+
+        final HttpHeaders headers = new HttpHeaders();
+        headers.set("content-type", imageDto.getContentType());
+
+        return ResponseEntity
+                .ok()
+                .headers(headers)
+                .body(imageDto.getFile());
     }
 }

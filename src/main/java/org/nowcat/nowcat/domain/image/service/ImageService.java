@@ -2,12 +2,15 @@ package org.nowcat.nowcat.domain.image.service;
 
 import lombok.RequiredArgsConstructor;
 import org.nowcat.nowcat.domain.image.dto.ImageDto;
+import org.nowcat.nowcat.domain.image.dto.ImageResponseDto;
 import org.nowcat.nowcat.domain.image.entity.Image;
 import org.nowcat.nowcat.domain.image.repository.ImageRepository;
 import org.nowcat.nowcat.global.exception.CustomException;
 import org.nowcat.nowcat.global.exception.constants.ExceptionCode;
 import org.nowcat.nowcat.global.infra.storage.local.LocalFileStorage;
+import org.nowcat.nowcat.global.infra.theCatApi.TheCatApiClient;
 import org.nowcat.nowcat.global.utils.ImageUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -27,10 +30,17 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageService {
 
+    @Value("${main-image.display-duration.hours}")
+    private int MAIN_IMAGE_DISPLAY_DURATION;
+
+    @Value("${server.base-url}")
+    private String SERVER_BASE_URL;
+
     private final MultipartProperties multipartProperties;
     private final ImageUtil imageUtil;
     private final LocalFileStorage localFileStorage;
     private final ImageRepository imageRepository;
+    private final TheCatApiClient theCatApiClient;
 
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png");
 
@@ -122,5 +132,38 @@ public class ImageService {
                 .contentType("image/"+extension)
                 .name(name)
                 .build();
+    }
+
+    public ImageResponseDto getMainImageUrl() {
+
+        // 1) 컨펌된 이미지 중 최신 이미지 조회
+        final Image image = imageRepository.findFirstByIsConfirmedTrueOrderByCreatedAtDesc()
+                .orElse(null);
+
+        // 2) 외부 API 사용해야하는지 확인 (이미지가 존재하지 않거나 오래된 이미지라면 외부 API 사용)
+        final boolean useExternalImageApi = image == null
+                || image.getCreatedAt().plusHours(MAIN_IMAGE_DISPLAY_DURATION).isBefore(LocalDateTime.now());
+
+        // 3) 외부 API 사용
+        if(useExternalImageApi) {
+            final String url = theCatApiClient.getRandomCatImageUrl();
+
+            //API에서 에러 발생한 경우 예외
+            if(url == null)  {
+                throw new CustomException(ExceptionCode.EXTERNAL_API_ERROR);
+            }
+
+            return ImageResponseDto.builder()
+                    .url(url)
+                    .build();
+        }
+        // 3) 자체 이미지 사용
+        else {
+            final Long imageId = image.getId();
+
+            return ImageResponseDto.builder()
+                    .url(SERVER_BASE_URL + "/api/v1/images/" + imageId)
+                    .build();
+        }
     }
 }

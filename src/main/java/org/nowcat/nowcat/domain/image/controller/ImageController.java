@@ -2,6 +2,7 @@ package org.nowcat.nowcat.domain.image.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.nowcat.nowcat.domain.image.dto.ImageDto;
+import org.nowcat.nowcat.domain.image.dto.ImageResponseDto;
 import org.nowcat.nowcat.domain.image.service.ImageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -39,5 +40,11 @@ public class ImageController {
                 .ok()
                 .headers(headers)
                 .body(imageDto.getFile());
+    }
+
+    @GetMapping("/images/main")
+    public ResponseEntity<ImageResponseDto> getMainImage() {
+
+        return ResponseEntity.ok().body(imageService.getMainImageUrl());
     }
 }

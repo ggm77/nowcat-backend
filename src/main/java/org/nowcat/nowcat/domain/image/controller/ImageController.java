@@ -20,7 +20,7 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @PostMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> uploadImage(
             @RequestPart(value = "file") final MultipartFile multipartFile
     ) {

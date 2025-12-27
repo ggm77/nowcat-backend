@@ -123,13 +123,19 @@ public class ImageService {
         // 3) 변수에 정보 저장
         final String name = image.getName();
         final String extension = image.getExtension();
+        final String contentType;
+        if (extension.equals("jpg") || extension.equals("jpeg")) {
+            contentType = "image/jpeg";
+        } else {
+            contentType = "image/png";
+        }
 
         // 4) 파일 읽어오기
         final Resource file = localFileStorage.loadImage(name);
 
         return ImageDto.builder()
                 .file(file)
-                .contentType("image/"+extension)
+                .contentType(contentType)
                 .name(name)
                 .build();
     }

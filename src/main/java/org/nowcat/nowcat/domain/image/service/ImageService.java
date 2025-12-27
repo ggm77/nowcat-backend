@@ -10,7 +10,6 @@ import org.nowcat.nowcat.global.infra.storage.local.LocalFileStorage;
 import org.nowcat.nowcat.global.utils.ImageUtil;
 import org.springframework.boot.servlet.autoconfigure.MultipartProperties;
 import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +34,7 @@ public class ImageService {
 
     private static final Set<String> ALLOWED_EXTENSIONS = Set.of("jpg", "jpeg", "png");
 
-    public Long uploadImage(final MultipartFile file) {
+    public void uploadImage(final MultipartFile file) {
 
         // 1) 이미지 파일 비었는지 확인
         if (file == null || file.isEmpty()) {
@@ -97,9 +96,7 @@ public class ImageService {
                 .build();
 
         // 10) 이미지 정보 저장
-        final Image savedImage = imageRepository.save(image);
-
-        return savedImage.getId();
+        imageRepository.save(image);
     }
 
     public ImageDto getImage(final Long imageId) {

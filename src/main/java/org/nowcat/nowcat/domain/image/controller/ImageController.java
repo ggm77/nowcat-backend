@@ -9,9 +9,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,15 +21,9 @@ public class ImageController {
     public ResponseEntity<Void> uploadImage(
             @RequestPart(value = "file") final MultipartFile multipartFile
     ) {
-        final Long imageId = imageService.uploadImage(multipartFile);
+        imageService.uploadImage(multipartFile);
 
-        final URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(imageId)
-                .toUri();
-
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/images/{imageId}")

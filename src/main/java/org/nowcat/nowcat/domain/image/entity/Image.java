@@ -54,4 +54,9 @@ public class Image {
         this.size = size;
         this.isConfirmed = isConfirmed;
     }
+
+    // 이미지 컨펌 정보 업데이트하는 메서드
+    public void updateIsConfirmed(final boolean isConfirmed) {
+        this.isConfirmed = isConfirmed;
+    }
 }

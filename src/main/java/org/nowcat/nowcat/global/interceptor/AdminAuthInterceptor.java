@@ -25,6 +25,11 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
             final Object handler
     ) throws Exception {
 
+        // CORS Preflight인 경우는 그냥 통과
+        if (httpServletRequest.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+
         //클라이언트가 보낸 key 가져오기
         final String clientKey = httpServletRequest.getHeader(ADMIN_CUSTOM_HEADER_NAME);
 

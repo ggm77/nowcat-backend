@@ -14,6 +14,9 @@ public enum ExceptionCode {
     INVALID_FILE_EXTENSION(HttpStatus.BAD_REQUEST, "파일 확장자가 올바르지 않습니다."),
     INVALID_FILE(HttpStatus.BAD_REQUEST, "올바르지 않은 파일입니다."),
     FILE_INFO_NOT_FOUND(HttpStatus.BAD_REQUEST, "파일을 정보를 찾지 못했습니다."),
+    TOO_MANY_LOGIN_ATTEMPTS(HttpStatus.BAD_REQUEST, "로그인 시도 횟수를 초과했습니다."),
+    LOGIN_FAILED(HttpStatus.BAD_REQUEST, "로그인 실패"),
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, "필요한 값이 비어있습니다."),
 
     FILE_NOT_CONFIRMED(HttpStatus.FORBIDDEN, "확인 되지 않은 파일입니다."),
     INVALID_FILE_PATH(HttpStatus.FORBIDDEN, "올바르지 않은 경로입니다."),
